@@ -1,0 +1,15 @@
+.feature-hover {
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border-radius: 0.5rem;
+  padding: 1.5rem 1rem;
+}
+
+.feature-hover:hover {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.feature-hover:hover h4,
+.feature-hover:hover p {
+  color: white;
+}
