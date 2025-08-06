@@ -14,9 +14,9 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'name' => 'required|string',
+            'email' => 'required|string|email|unique:users',
+            'password' => 'required|confirmed',
         ]);
 
         User::create($data);
@@ -24,6 +24,7 @@ class AuthController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'User registered successfully.',
+
         ]);
     }
 
@@ -43,8 +44,10 @@ class AuthController extends Controller
                 'message' => 'Invalid credentials.',
             ]);
         }
-        $user = auth::user();
-        $token = $user->createToken('myToken')->plainTextToken;
+        $user = Auth::user();
+
+        $token = Auth::user()->createToken('myToken')->plainTextToken;
+
 
         return response()->json([
             'status' => true,
