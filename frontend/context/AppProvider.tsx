@@ -1,7 +1,7 @@
 "use client";
 
 import App from "next/app";
-import { createContext, use, useContext, useState } from "react";
+import { createContext, use, useContext, useEffect, useState } from "react";
 import Loader from "../components/Loader";
 import axios from "axios";
 import { toast } from "react-hot-toast";
@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 
 interface appProviderType {
   isLoading: boolean;
+  authToken: string | null;
   login: (email: string, password: string) => Promise<void>;
   register: (
     name: string,
@@ -17,15 +18,27 @@ interface appProviderType {
     password: string,
     password_confirmation: string
   ) => Promise<void>;
+  logout: () => void;
 }
 
 const AppContext = createContext<appProviderType | undefined>(undefined);
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}`;
 
 export const AppProvider = ({ children }: { children: React.ReactNode }) => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const token = Cookies.get("authToken");
+
+    if (token) {
+      setAuthToken(token);
+    } else {
+      router.push("/auth");
+    }
+    setIsLoading(false);
+  });
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
@@ -72,8 +85,17 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
       setIsLoading(false);
     }
   };
+  const logout = () => {
+    setAuthToken(null);
+    Cookies.remove("authToken");
+    setIsLoading(false);
+    toast.success("Logout successful!");
+    router.push("/auth");
+  };
   return (
-    <AppContext.Provider value={{ login, register, isLoading }}>
+    <AppContext.Provider
+      value={{ login, register, isLoading, authToken, logout }}
+    >
       {isLoading ? <Loader /> : children}
     </AppContext.Provider>
   );

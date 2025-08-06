@@ -1,6 +1,11 @@
+"use client";
+
 import Link from "next/link";
+import { myAppHook } from "../context/AppProvider";
 
 const Navbar = () => {
+  const { logout } = myAppHook();
+
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -24,7 +29,9 @@ const Navbar = () => {
                 </Link>
               </li>
               <li className="nav-item">
-                <button className="btn btn-danger ms-2">Logout</button>
+                <button className="btn btn-danger ms-2" onClick={logout}>
+                  Logout
+                </button>
               </li>
 
               <li className="nav-item">
